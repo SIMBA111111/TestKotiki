@@ -18,6 +18,15 @@ async def get_all_cats(db: AsyncSession):
     return result.all()
 
 
+async def filter_cats(db: AsyncSession, breed: str):
+    result = await db.execute(
+        select(CatsModel, BreedsModel.name, BreedsModel.id)
+        .join(BreedsModel)
+        .filter(BreedsModel.name.ilike(f'%{breed}%'))
+    )
+    return result.all()
+
+
 async def get_cat_by_id(db: AsyncSession, cat_id: int):
     result = await db.execute(
         select(CatsModel, BreedsModel.name, BreedsModel.id)

@@ -51,6 +51,33 @@ async def get_all_cats(db: AsyncSession):
     return all_cats
 
 
+async def filter_cats(db: AsyncSession, breed: str):
+    try:
+        result = await repository.filter_cats(db, breed)
+    except Exception as e:
+        print(f"Error get all cats from db: {e}")
+        raise HTTPException(status_code=500, detail="Server Error")
+    all_cats = []
+    try:
+        for cat, name, id in result:
+            cat_serialize = SAllCats(
+                id=cat.id,
+                color=cat.color,
+                age=cat.age,
+                description=cat.description,
+                breed=SAllBreeds(
+                    id=id,
+                    name=name
+                )
+            )
+
+            all_cats.append(cat_serialize)
+    except Exception as e:
+        print(f"Error serializable all cats: {e}")
+        raise HTTPException(status_code=500, detail="Server Error")
+    return all_cats
+
+
 async def get_cat_by_id(db: AsyncSession, cat_id: int):
     try:
         result = await repository.get_cat_by_id(db, cat_id)

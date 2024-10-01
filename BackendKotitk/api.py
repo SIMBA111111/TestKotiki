@@ -9,7 +9,7 @@ from fastapi import status
 from fastapi import APIRouter
 from fastapi.responses import UJSONResponse
 
-from schemas import SAllBreeds, SAllCats, SCreateCat, SDeleteCat, SUpdateCat
+from schemas import SAllBreeds, SAllCats, SCreateCat, SDeleteCat, SUpdateCat, SFilterData
 
 from dependecies import get_db
 
@@ -28,8 +28,15 @@ async def get_list_cats(db: AsyncSession = Depends(get_db)):
     return all_cats
 
 
+@router.get("/filter-cats", response_model=list[SAllCats])
+async def filter_cats(filter_data: str,
+                      db: AsyncSession = Depends(get_db)):
+    filtered_cats = await services.filter_cats(db, filter_data)
+    return filtered_cats
+
+
 @router.get("/get-cat/{cat_id}", response_model=SAllCats)
-async def get_list_cats(cat_id: int,
+async def get_cat(cat_id: int,
                         db: AsyncSession = Depends(get_db)):
     cat = await services.get_cat_by_id(db, cat_id)
     return cat
@@ -44,7 +51,7 @@ async def create_cat(cat_data: SCreateCat = Body(...),
 
 
 @router.patch("/update-cat/{cat_id}")
-async def create_cat(cat_id: int,
+async def update_cat(cat_id: int,
                      cat_data: SUpdateCat = Body(...),
                      db: AsyncSession = Depends(get_db),):
     updated_cat = await services.update_cat(db, cat_id, cat_data)
@@ -52,7 +59,7 @@ async def create_cat(cat_id: int,
 
 
 @router.delete("/delete-cat/{cat_id}")
-async def create_cat(cat_id: int,
+async def delete_cat(cat_id: int,
                      db: AsyncSession = Depends(get_db),
                      ):
     await services.delete_cat(db, cat_id)
