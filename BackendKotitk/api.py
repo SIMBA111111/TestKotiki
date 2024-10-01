@@ -9,7 +9,7 @@ from fastapi import status
 from fastapi import APIRouter
 from fastapi.responses import UJSONResponse
 
-from schemas import SAllBreeds, SAllCats, SCreateCat, SDeleteCat, SUpdateCat, SFilterData
+from schemas import SAllBreeds, SAllCats, SCreateCat, SDeleteCat, SUpdateCat
 
 from dependecies import get_db
 
